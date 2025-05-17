@@ -1,7 +1,23 @@
 package main
 
-import "fmt"
+import (
+	"fmt"
+	"os"
+)
 
 func main() {
-	fmt.Println("Hello word counter")
+
+	data, _ := os.ReadFile("./words.txt")
+	_ = data
+
+	wordCount := 1
+
+	for _, b := range data {
+		if b == ' ' {
+			wordCount++
+		}
+	}
+
+	fmt.Println(wordCount)
+
 }
