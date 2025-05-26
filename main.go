@@ -9,11 +9,15 @@ func main() {
 
 	data, _ := os.ReadFile("./words.txt")
 
-	fmt.Println(countWords(data))
+	fmt.Println(CountWords(data))
 
 }
 
-func countWords(data []byte) int {
+func CountWords(data []byte) int {
+
+	if len(data) == 0 {
+		return 0
+	}
 
 	wordCount := 1
 
