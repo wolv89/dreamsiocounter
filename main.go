@@ -11,12 +11,32 @@ func main() {
 
 	filename := "./words.txt"
 
-	data, err := os.ReadFile(filename)
+	// log.SetFlags(0)
+
+	file, err := os.Open(filename)
 	if err != nil {
 		log.Fatalln("failed to read file:", err)
 	}
 
-	fmt.Println(CountWords(data))
+	PrintFileContents(file)
+	// fmt.Println(CountWords(data))
+
+}
+
+func PrintFileContents(file *os.File) {
+
+	const bufferSize = 8192
+	buffer := make([]byte, bufferSize)
+
+	for {
+		size, err := file.Read(buffer)
+		if err != nil {
+			break
+		}
+
+		subBuffer := buffer[:size]
+		fmt.Println(string(subBuffer))
+	}
 
 }
 
