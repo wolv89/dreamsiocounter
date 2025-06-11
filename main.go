@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"unicode"
 )
 
 func main() {
@@ -18,12 +19,15 @@ func main() {
 		log.Fatalln("failed to read file:", err)
 	}
 
-	PrintFileContents(file)
-	// fmt.Println(CountWords(data))
+	wordCount := CountWordsInFile(file)
+	fmt.Println(wordCount)
 
 }
 
-func PrintFileContents(file *os.File) {
+func CountWordsInFile(file *os.File) int {
+
+	wordCount := 0
+	isInsideWord := false
 
 	const bufferSize = 8192
 	buffer := make([]byte, bufferSize)
@@ -34,9 +38,21 @@ func PrintFileContents(file *os.File) {
 			break
 		}
 
-		subBuffer := buffer[:size]
-		fmt.Println(string(subBuffer))
+		isInsideWord = !unicode.IsSpace(rune(buffer[0])) && isInsideWord
+
+		bufferCount := CountWords(buffer[:size])
+		if isInsideWord {
+			bufferCount--
+		}
+
+		if !unicode.IsSpace(rune(buffer[size-1])) {
+			isInsideWord = true
+		}
+
+		wordCount += bufferCount
 	}
+
+	return wordCount
 
 }
 
