@@ -10,17 +10,40 @@ import (
 
 func main() {
 
-	filename := "./words.txt"
+	log.SetFlags(0)
 
-	// log.SetFlags(0)
+	if len(os.Args) < 2 {
+		log.Fatalln("error: no filename provided")
+	}
+
+	total := 0
+
+	for i := 1; i < len(os.Args); i++ {
+
+		filename := os.Args[i]
+		wordCount := CountWordsInFile(filename)
+
+		fmt.Printf("%d %s\n", wordCount, filename)
+		total += wordCount
+
+	}
+
+	if len(os.Args) > 2 {
+		fmt.Printf("%d total\n", total)
+	}
+
+	fmt.Println("")
+
+}
+
+func CountWordsInFile(filename string) int {
 
 	file, err := os.Open(filename)
 	if err != nil {
 		log.Fatalln("failed to read file:", err)
 	}
 
-	wordCount := CountWords(file)
-	fmt.Println(wordCount)
+	return CountWords(file)
 
 }
 
