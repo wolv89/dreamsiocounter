@@ -12,10 +12,6 @@ func main() {
 
 	log.SetFlags(0)
 
-	if len(os.Args) < 2 {
-		log.Fatalln("error: no filename provided")
-	}
-
 	total := 0
 	didError := false
 
@@ -33,6 +29,11 @@ func main() {
 		fmt.Printf("%d %s\n", wordCount, filename)
 		total += wordCount
 
+	}
+
+	if len(os.Args) == 1 {
+		wordCount := CountWords(os.Stdin)
+		fmt.Println(wordCount)
 	}
 
 	if len(os.Args) > 2 {
@@ -53,6 +54,7 @@ func CountWordsInFile(filename string) (int, error) {
 	if err != nil {
 		return 0, err
 	}
+	defer file.Close()
 
 	return CountWords(file), nil
 
