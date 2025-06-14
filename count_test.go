@@ -65,3 +65,62 @@ func TestCountWords(t *testing.T) {
 	}
 
 }
+
+func TestCountLines(t *testing.T) {
+
+	testCases := []struct {
+		name  string
+		input string
+		wants int
+	}{
+		{
+			name:  "5 words",
+			input: "one two three four five\n",
+			wants: 1,
+		},
+		{
+			name:  "empty input",
+			input: "",
+			wants: 0,
+		},
+		{
+			name:  "single newline",
+			input: "\n",
+			wants: 1,
+		},
+		{
+			name:  "two lines",
+			input: "one two three\nfour five\n",
+			wants: 2,
+		},
+		{
+			name:  "multiple lines",
+			input: "What if\n\nmaybe I hit enter\n\n\ntoo many\ntimes??",
+			wants: 6,
+		},
+		{
+			name:  "prefix spaces",
+			input: "\n\nhello",
+			wants: 2,
+		},
+		{
+			name:  "suffix spaces",
+			input: "world\n\n\n",
+			wants: 3,
+		},
+	}
+
+	for _, tc := range testCases {
+		t.Run(tc.name, func(t *testing.T) {
+			r := strings.NewReader(tc.input)
+			result := counter.CountLines(r)
+
+			if result != tc.wants {
+				t.Logf("expected: %d got: %d", tc.wants, result)
+				t.Fail()
+			}
+
+		})
+	}
+
+}
