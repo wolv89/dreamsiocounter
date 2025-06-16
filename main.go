@@ -16,7 +16,7 @@ func main() {
 	for i := 1; i < len(os.Args); i++ {
 
 		filename := os.Args[i]
-		counts, err := CountWordsInFile(filename)
+		counts, err := CountFile(filename)
 
 		if err != nil {
 			didError = true
@@ -33,8 +33,8 @@ func main() {
 	}
 
 	if len(os.Args) == 1 {
-		wordCount := CountWords(os.Stdin)
-		fmt.Println(wordCount)
+		counts := GetCounts(os.Stdin)
+		fmt.Printf("%d %d %d\n", counts.Lines, counts.Words, counts.Bytes)
 	}
 
 	if len(os.Args) > 2 {

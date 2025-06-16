@@ -7,6 +7,39 @@ import (
 	counter "github.com/wolv89/dreamsiocounter"
 )
 
+func TestGetCounts(t *testing.T) {
+
+	testCases := []struct {
+		name  string
+		input string
+		wants counter.Counts
+	}{
+		{
+			name:  "5 words",
+			input: "one two three four five\n",
+			wants: counter.Counts{
+				Lines: 1,
+				Words: 5,
+				Bytes: 24,
+			},
+		},
+	}
+
+	for _, tc := range testCases {
+		t.Run(tc.name, func(t *testing.T) {
+			r := strings.NewReader(tc.input)
+			result := counter.GetCounts(r)
+
+			if result != tc.wants {
+				t.Logf("expected: %v got: %v", tc.wants, result)
+				t.Fail()
+			}
+
+		})
+	}
+
+}
+
 func TestCountWords(t *testing.T) {
 
 	testCases := []struct {
