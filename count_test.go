@@ -124,3 +124,47 @@ func TestCountLines(t *testing.T) {
 	}
 
 }
+
+func TestCountBytes(t *testing.T) {
+
+	testCases := []struct {
+		name  string
+		input string
+		wants int
+	}{
+		{
+			name:  "5 words",
+			input: "one two three four five",
+			wants: 23,
+		},
+		{
+			name:  "empty input",
+			input: "",
+			wants: 0,
+		},
+		{
+			name:  "all spaces",
+			input: "         ",
+			wants: 9,
+		},
+		{
+			name:  "newlines and tabs",
+			input: "one\ntwo\tthree",
+			wants: 13,
+		},
+	}
+
+	for _, tc := range testCases {
+		t.Run(tc.name, func(t *testing.T) {
+			r := strings.NewReader(tc.input)
+			result := counter.CountBytes(r)
+
+			if result != tc.wants {
+				t.Logf("expected: %d got: %d", tc.wants, result)
+				t.Fail()
+			}
+
+		})
+	}
+
+}

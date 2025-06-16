@@ -10,13 +10,13 @@ func main() {
 
 	log.SetFlags(0)
 
-	total := 0
+	totals := Counts{}
 	didError := false
 
 	for i := 1; i < len(os.Args); i++ {
 
 		filename := os.Args[i]
-		wordCount, err := CountWordsInFile(filename)
+		counts, err := CountWordsInFile(filename)
 
 		if err != nil {
 			didError = true
@@ -24,8 +24,11 @@ func main() {
 			continue
 		}
 
-		fmt.Printf("%d %s\n", wordCount, filename)
-		total += wordCount
+		fmt.Printf("%d %d %d %s\n", counts.Lines, counts.Words, counts.Bytes, filename)
+
+		totals.Lines += counts.Lines
+		totals.Words += counts.Words
+		totals.Bytes += counts.Bytes
 
 	}
 
@@ -35,7 +38,7 @@ func main() {
 	}
 
 	if len(os.Args) > 2 {
-		fmt.Printf("%d total\n", total)
+		fmt.Printf("%d %d %d total\n", totals.Lines, totals.Words, totals.Bytes)
 	}
 
 	fmt.Println("")
