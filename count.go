@@ -11,7 +11,13 @@ type Counts struct {
 	Lines, Words, Bytes int
 }
 
-func (c Counts) Print(filenames ...string) {
+func (c *Counts) Add(d Counts) {
+	c.Lines += d.Lines
+	c.Words += d.Words
+	c.Bytes += d.Bytes
+}
+
+func (c *Counts) Print(filenames ...string) {
 
 	fmt.Printf("%d %d %d", c.Lines, c.Words, c.Bytes)
 

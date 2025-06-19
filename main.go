@@ -25,10 +25,7 @@ func main() {
 		}
 
 		counts.Print(filename)
-
-		totals.Lines += counts.Lines
-		totals.Words += counts.Words
-		totals.Bytes += counts.Bytes
+		totals.Add(counts)
 
 	}
 
