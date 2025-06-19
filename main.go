@@ -24,7 +24,7 @@ func main() {
 			continue
 		}
 
-		fmt.Printf("%d %d %d %s\n", counts.Lines, counts.Words, counts.Bytes, filename)
+		counts.Print(filename)
 
 		totals.Lines += counts.Lines
 		totals.Words += counts.Words
@@ -34,11 +34,11 @@ func main() {
 
 	if len(os.Args) == 1 {
 		counts := GetCounts(os.Stdin)
-		fmt.Printf("%d %d %d\n", counts.Lines, counts.Words, counts.Bytes)
+		counts.Print()
 	}
 
 	if len(os.Args) > 2 {
-		fmt.Printf("%d %d %d total\n", totals.Lines, totals.Words, totals.Bytes)
+		totals.Print("total")
 	}
 
 	fmt.Println("")

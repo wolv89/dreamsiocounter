@@ -2,12 +2,25 @@ package main
 
 import (
 	"bufio"
+	"fmt"
 	"io"
 	"os"
 )
 
 type Counts struct {
 	Lines, Words, Bytes int
+}
+
+func (c Counts) Print(filenames ...string) {
+
+	fmt.Printf("%d %d %d", c.Lines, c.Words, c.Bytes)
+
+	for _, filename := range filenames {
+		fmt.Printf(" %s", filename)
+	}
+
+	fmt.Print("\n")
+
 }
 
 func GetCounts(f io.ReadSeeker) Counts {
