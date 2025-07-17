@@ -5,6 +5,8 @@ import (
 	"fmt"
 	"io"
 	"os"
+	"strconv"
+	"strings"
 )
 
 type Counts struct {
@@ -17,15 +19,23 @@ func (c *Counts) Add(d Counts) {
 	c.Bytes += d.Bytes
 }
 
-func (c *Counts) Print(filenames ...string) {
+func (c *Counts) Print(opts DisplayOptions, filenames ...string) {
 
-	fmt.Printf("%d %d %d", c.Lines, c.Words, c.Bytes)
+	xs := []string{}
 
-	for _, filename := range filenames {
-		fmt.Printf(" %s", filename)
+	if opts.ShouldShowLines() {
+		xs = append(xs, strconv.Itoa(c.Lines))
+	}
+	if opts.ShouldShowWords() {
+		xs = append(xs, strconv.Itoa(c.Words))
+	}
+	if opts.ShouldShowBytes() {
+		xs = append(xs, strconv.Itoa(c.Bytes))
 	}
 
-	fmt.Print("\n")
+	xs = append(xs, filenames...)
+
+	fmt.Print(strings.Join(xs, " "), "\n")
 
 }
 
