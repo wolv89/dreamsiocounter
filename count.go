@@ -22,21 +22,25 @@ func (c *Counts) Add(d Counts) {
 
 func (c *Counts) Print(opts DisplayOptions, filenames ...string) {
 
-	xs := []string{}
+	stats := []string{}
 
 	if opts.ShouldShowLines() {
-		xs = append(xs, strconv.Itoa(c.Lines))
+		stats = append(stats, strconv.Itoa(c.Lines))
 	}
 	if opts.ShouldShowWords() {
-		xs = append(xs, strconv.Itoa(c.Words))
+		stats = append(stats, strconv.Itoa(c.Words))
 	}
 	if opts.ShouldShowBytes() {
-		xs = append(xs, strconv.Itoa(c.Bytes))
+		stats = append(stats, strconv.Itoa(c.Bytes))
 	}
 
-	xs = append(xs, filenames...)
+	fmt.Fprint(opts.Target, strings.Join(stats, "\t")+"\t")
 
-	fmt.Print(strings.Join(xs, " "), "\n")
+	for _, fname := range filenames {
+		fmt.Fprint(opts.Target, " "+fname)
+	}
+
+	fmt.Fprint(opts.Target, "\n")
 
 }
 

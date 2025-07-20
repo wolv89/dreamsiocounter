@@ -3,11 +3,14 @@ package main
 import (
 	"flag"
 	"fmt"
+	"io"
 	"log"
 	"os"
+	"text/tabwriter"
 )
 
 type DisplayOptions struct {
+	Target                          io.Writer
 	ShowLines, ShowWords, ShowBytes bool
 }
 
@@ -44,6 +47,9 @@ func main() {
 
 	log.SetFlags(0)
 
+	wr := tabwriter.NewWriter(os.Stdout, 0, 8, 1, ' ', tabwriter.AlignRight)
+	opts.Target = wr
+
 	totals := Counts{}
 	didError := false
 
@@ -71,7 +77,9 @@ func main() {
 		totals.Print(opts, "total")
 	}
 
-	fmt.Println("")
+	fmt.Fprintln(opts.Target, "")
+
+	wr.Flush()
 
 	if didError {
 		os.Exit(1)
