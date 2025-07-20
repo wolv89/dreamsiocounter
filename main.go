@@ -10,8 +10,8 @@ import (
 )
 
 type DisplayOptions struct {
-	Target                          io.Writer
-	ShowLines, ShowWords, ShowBytes bool
+	Target                                      io.Writer
+	ShowLines, ShowWords, ShowBytes, ShowHeader bool
 }
 
 func (opts DisplayOptions) ShouldShowLines() bool {
@@ -42,6 +42,7 @@ func main() {
 	flag.BoolVar(&opts.ShowLines, "l", false, "Used to toggle whether or not to show the line count")
 	flag.BoolVar(&opts.ShowWords, "w", false, "Used to toggle whether or not to show the word count")
 	flag.BoolVar(&opts.ShowBytes, "c", false, "Used to toggle whether or not to show the byte count")
+	flag.BoolVar(&opts.ShowHeader, "header", false, "Used to toggle whether or not to show the column names as a header line")
 
 	flag.Parse()
 
@@ -49,6 +50,8 @@ func main() {
 
 	wr := tabwriter.NewWriter(os.Stdout, 0, 8, 1, ' ', tabwriter.AlignRight)
 	opts.Target = wr
+
+	PrintHeader(opts)
 
 	totals := Counts{}
 	didError := false

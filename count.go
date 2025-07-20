@@ -44,6 +44,28 @@ func (c *Counts) Print(opts DisplayOptions, filenames ...string) {
 
 }
 
+func PrintHeader(opts DisplayOptions) {
+
+	if !opts.ShowHeader {
+		return
+	}
+
+	cols := []string{}
+
+	if opts.ShouldShowLines() {
+		cols = append(cols, "lines")
+	}
+	if opts.ShouldShowWords() {
+		cols = append(cols, "words")
+	}
+	if opts.ShouldShowBytes() {
+		cols = append(cols, "bytes")
+	}
+
+	fmt.Fprintln(opts.Target, strings.Join(cols, "\t")+"\t")
+
+}
+
 func GetCounts(f io.Reader) Counts {
 
 	counts := Counts{}
