@@ -60,7 +60,8 @@ func main() {
 	filenames := flag.Args()
 	wg := sync.WaitGroup{}
 	wg.Add(len(filenames))
-	l := sync.Mutex{}
+
+	ch := make(chan CountsWithFilename)
 
 	for _, filename := range filenames {
 
@@ -76,17 +77,24 @@ func main() {
 				return
 			}
 
-			l.Lock()
-			defer l.Unlock()
-
-			counts.Print(opts, filename)
-			totals.Add(counts)
+			ch <- CountsWithFilename{
+				counts,
+				filename,
+			}
 
 		}()
 
 	}
 
-	wg.Wait()
+	go func() {
+		wg.Wait()
+		close(ch)
+	}()
+
+	for res := range ch {
+		totals.Add(res.counts)
+		res.counts.Print(opts, res.filename)
+	}
 
 	if len(filenames) == 0 {
 		counts := GetCounts(os.Stdin)

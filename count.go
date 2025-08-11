@@ -14,6 +14,11 @@ type Counts struct {
 	Lines, Words, Bytes int
 }
 
+type CountsWithFilename struct {
+	counts   Counts
+	filename string
+}
+
 func (c *Counts) Add(d Counts) {
 	c.Lines += d.Lines
 	c.Words += d.Words
