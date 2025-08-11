@@ -6,6 +6,7 @@ import (
 	"io"
 	"log"
 	"os"
+	"sync"
 	"text/tabwriter"
 )
 
@@ -57,21 +58,35 @@ func main() {
 	didError := false
 
 	filenames := flag.Args()
+	wg := sync.WaitGroup{}
+	wg.Add(len(filenames))
+	l := sync.Mutex{}
 
 	for _, filename := range filenames {
 
-		counts, err := CountFile(filename)
+		go func() {
 
-		if err != nil {
-			didError = true
-			fmt.Fprintln(os.Stderr, "counter:", err)
-			continue
-		}
+			defer wg.Done()
 
-		counts.Print(opts, filename)
-		totals.Add(counts)
+			counts, err := CountFile(filename)
+
+			if err != nil {
+				didError = true
+				fmt.Fprintln(os.Stderr, "counter:", err)
+				return
+			}
+
+			l.Lock()
+			defer l.Unlock()
+
+			counts.Print(opts, filename)
+			totals.Add(counts)
+
+		}()
 
 	}
+
+	wg.Wait()
 
 	if len(filenames) == 0 {
 		counts := GetCounts(os.Stdin)
