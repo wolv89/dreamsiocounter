@@ -159,3 +159,46 @@ func CountBytes(file io.Reader) int {
 	return int(byteCount)
 
 }
+
+func GetCountsMW(r io.Reader) Counts {
+
+	bytesReader, bytesWriter := io.Pipe()
+	wordsReader, wordsWriter := io.Pipe()
+	linesReader, linesWriter := io.Pipe()
+
+	w := io.MultiWriter(bytesWriter, wordsWriter, linesWriter)
+
+	chBytes := make(chan int)
+	chWords := make(chan int)
+	chLines := make(chan int)
+
+	go func() {
+		defer close(chBytes)
+		chBytes <- CountBytes(bytesReader)
+	}()
+
+	go func() {
+		defer close(chWords)
+		chWords <- CountBytes(wordsReader)
+	}()
+
+	go func() {
+		defer close(chLines)
+		chLines <- CountBytes(linesReader)
+	}()
+
+	io.Copy(w, r)
+	bytesWriter.Close()
+	wordsWriter.Close()
+	linesWriter.Close()
+
+	byteCount := <-chBytes
+	wordCount := <-chWords
+	lineCount := <-chLines
+
+	return Counts{
+		Bytes: byteCount,
+		Words: wordCount,
+		Lines: lineCount,
+	}
+}
