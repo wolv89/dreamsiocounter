@@ -201,3 +201,25 @@ func TestCountBytes(t *testing.T) {
 	}
 
 }
+
+var benchData = []string{
+	"this is a test data string\nthat runs across\nmultiple lines.\n",
+	"one two three\nfour\nfive\nsix\nseven\neight",
+	"this is a weird\n\n\n\n\n\n\n       string.",
+}
+
+func BenchmarkGetCounts(b *testing.B) {
+	for i := range b.N {
+		data := benchData[i%len(benchData)]
+		r := strings.NewReader(data)
+		counter.GetCounts(r)
+	}
+}
+
+func BenchmarkGetCountsSinglePass(b *testing.B) {
+	for i := range b.N {
+		data := benchData[i%len(benchData)]
+		r := strings.NewReader(data)
+		counter.GetCountsSinglePass(r)
+	}
+}

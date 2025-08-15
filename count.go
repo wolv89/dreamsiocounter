@@ -71,7 +71,7 @@ func PrintHeader(opts DisplayOptions) {
 
 }
 
-func GetCounts(f io.Reader) Counts {
+func GetCountsSinglePass(f io.Reader) Counts {
 
 	counts := Counts{}
 
@@ -160,7 +160,7 @@ func CountBytes(file io.Reader) int {
 
 }
 
-func GetCountsMW(r io.Reader) Counts {
+func GetCounts(r io.Reader) Counts {
 
 	bytesReader, bytesWriter := io.Pipe()
 	wordsReader, wordsWriter := io.Pipe()
@@ -179,12 +179,12 @@ func GetCountsMW(r io.Reader) Counts {
 
 	go func() {
 		defer close(chWords)
-		chWords <- CountBytes(wordsReader)
+		chWords <- CountWords(wordsReader)
 	}()
 
 	go func() {
 		defer close(chLines)
-		chLines <- CountBytes(linesReader)
+		chLines <- CountLines(linesReader)
 	}()
 
 	io.Copy(w, r)
