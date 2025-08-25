@@ -23,6 +23,27 @@ func getCommand(t *testing.T, args ...string) *exec.Cmd {
 
 }
 
+func createFile(content string) (*os.File, error) {
+
+	file, err := os.CreateTemp("", "counter-test-*")
+	if err != nil {
+		return nil, fmt.Errorf("unable to create temporary file for testing: %w", err)
+	}
+
+	_, err = file.WriteString(content)
+	if err != nil {
+		return nil, fmt.Errorf("unable to write to temporary file for testing: %w", err)
+	}
+
+	err = file.Close()
+	if err != nil {
+		return nil, fmt.Errorf("unable to close temporary file for testing: %w", err)
+	}
+
+	return file, nil
+
+}
+
 func TestStdin(t *testing.T) {
 
 	cmd := getCommand(t)
