@@ -60,6 +60,8 @@ func main() {
 	filenames := flag.Args()
 	ch, errCh := CountFiles(filenames)
 
+	results := make([]CountsWithFilename, len(filenames))
+
 loop:
 	for {
 		select {
@@ -68,13 +70,19 @@ loop:
 				break loop
 			}
 			totals.Add(res.counts)
-			res.counts.Print(opts, res.filename)
+			results[res.idx] = res
 		case err, open := <-errCh:
 			if !open {
 				break loop
 			}
 			didError = true
 			fmt.Fprintln(os.Stderr, "counter:", err)
+		}
+	}
+
+	for _, res := range results {
+		if len(res.filename) > 0 {
+			res.counts.Print(opts, res.filename)
 		}
 	}
 
@@ -103,7 +111,7 @@ func CountFiles(filenames []string) (<-chan CountsWithFilename, <-chan error) {
 	wg := sync.WaitGroup{}
 	wg.Add(len(filenames))
 
-	for _, filename := range filenames {
+	for i, filename := range filenames {
 
 		go func() {
 
@@ -119,6 +127,7 @@ func CountFiles(filenames []string) (<-chan CountsWithFilename, <-chan error) {
 			ch <- CountsWithFilename{
 				counts,
 				filename,
+				i,
 			}
 
 		}()

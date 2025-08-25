@@ -1,11 +1,9 @@
 package e2e
 
 import (
-	"bufio"
 	"bytes"
 	"fmt"
 	"os"
-	"strings"
 	"testing"
 )
 
@@ -32,7 +30,7 @@ func TestMultipleFiles(t *testing.T) {
 	testTotals := " 3 8 37"
 
 	testFilenames := make([]string, 0, len(testNodes))
-	wants := make(map[string]struct{})
+	var wants string
 
 	for _, tn := range testNodes {
 		file, err := createFile(tn.input)
@@ -41,10 +39,10 @@ func TestMultipleFiles(t *testing.T) {
 		}
 		defer os.Remove(file.Name())
 		testFilenames = append(testFilenames, file.Name())
-		wants[fmt.Sprintf("%s %s", tn.output, file.Name())] = struct{}{}
+		wants += fmt.Sprintf("%s %s\n", tn.output, file.Name())
 	}
 
-	wants[fmt.Sprintf("%s total", testTotals)] = struct{}{}
+	wants += fmt.Sprintf("%s total\n\n", testTotals)
 
 	cmd := getCommand(t, testFilenames...)
 
@@ -55,23 +53,10 @@ func TestMultipleFiles(t *testing.T) {
 		t.Fatal("failed to run command:", err)
 	}
 
-	scanner := bufio.NewScanner(stdout)
+	res := stdout.String()
 
-	for scanner.Scan() {
-		line := scanner.Text()
-		if len(strings.TrimSpace(line)) == 0 {
-			continue
-		}
-		if _, ok := wants[line]; ok {
-			delete(wants, line)
-		} else {
-			t.Log("unexpected line:", line)
-			t.Fail()
-		}
-	}
-
-	if len(wants) != 0 {
-		t.Fatal("desired output not matched:", wants)
+	if res != wants {
+		t.Fatal("wants:\n", wants, " got:\n", res)
 	}
 
 }

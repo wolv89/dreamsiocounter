@@ -17,6 +17,7 @@ type Counts struct {
 type CountsWithFilename struct {
 	counts   Counts
 	filename string
+	idx      int
 }
 
 func (c *Counts) Add(d Counts) {
